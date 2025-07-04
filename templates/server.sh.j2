@@ -1,0 +1,23 @@
+sudo docker run --runtime nvidia --gpus all \  
+  -v {{ docker_path }} -it --network=host --group-add=video --ipc=host \  
+  --cap-add=SYS_PTRACE --security-opt seccomp=unconfined {{ docker_name }} bash -c "  
+cd {{ exe_path }};  
+NCCL_P2P_DISABLE={{ nccl }} \  
+CUDA_VISIBLE_DEVICES={{ gpu }} \  
+VLLM_WORKER_MULTIPROC_METHOD=spawn \  
+VLLM_MLA_DISABLE=1 \  
+vllm serve /home/amd/model2/bob/{{ model_name }} \  
+       --block-size {{ block_size }} \  
+       --dtype {{ dtype }} \  
+       --enable-chunked-prefill \  
+       --gpu-memory-utilization {{ util }} \  
+       --max-model-len {{ max_len }} \  
+       --tensor-parallel-size {{ tensor_parallel }} \  
+       --trust-remote-code \  
+       --use-v2-block-manager \  
+       --disable-log-requests \  
+       --disable-log-stats \  
+       --max-num-seqs {{ max_seqs }} \  
+       --max-num-batched-tokens {{ max_tokens }} \  
+       --enable-prefix-caching  
+"  

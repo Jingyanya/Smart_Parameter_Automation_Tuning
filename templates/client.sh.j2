@@ -1,0 +1,13 @@
+sudo docker run --runtime nvidia --gpus all -v {{ docker_path }} -it --network=host --group-add=video --ipc=host --cap-add=SYS_PTRACE --security-opt seccomp=unconfined {{ docker_name }} bash -c "
+cd /home/amd/projects/jiangtao/vllm/;
+NCCL_P2P_DISABLE={{ nccl }} \
+CUDA_VISIBLE_DEVICES={{ gpu }} \
+python3 benchmarks/benchmark_serving.py \
+    --backend vllm \
+    --dataset-name $DATASET_NAME \
+    --dataset-path $DATASET_PATH \
+    --model /home/amd/model2/bob/$MODEL_NAME \
+    --num-prompts $NUM_PROMPTS \
+    --request-rate $REQUEST_RATE \
+    --trust-remote-code
+"
