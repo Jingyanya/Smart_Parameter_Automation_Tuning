@@ -1,0 +1,13 @@
+docker exec -it d0ce559b0fad /bin/bash -c "
+cd /app/vllm/;
+HF_HOME=/app/data/huggingface \
+NCCL_P2P_DISABLE={{ nccl }} \
+CUDA_VISIBLE_DEVICES={{ gpu }} \
+python3 benchmarks/benchmark_serving.py \
+    --backend vllm \
+    --dataset-path {{ dataset_path }} \
+    --model {{ name }} \
+    --num-prompts {{ num_prompt }} \
+    --request-rate {{ req_rate }} \
+    --trust-remote-code
+"

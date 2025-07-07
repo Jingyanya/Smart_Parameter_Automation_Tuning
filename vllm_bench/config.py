@@ -6,11 +6,10 @@ import itertools, yaml
 class dockerCfg:
     host: str
     user: str
+    password: str
     docker_path: str
     docker_name: str
     exe_path: str
-    gpu: str
-    tensor_parallel: int
 
 @dataclass(frozen=True)
 class Modelcfg:
@@ -22,6 +21,8 @@ class Modelcfg:
     max_num_batched_tokens: list[int]
     gpu_memory_util: list[float]
     max_model_len: list[int]
+    gpu: str
+    tensor_parallel: int
 
 @dataclass(frozen=True)
 class BenchCfg:
@@ -53,31 +54,49 @@ class GlobalCfg:
         m = self.model
         b = self.benchmark
         for (
+            name,
+            dtype,
             block_size,
             nccl,
             max_seqs,
             max_tokens,
             util,
+            gpu,
             max_len,
+            tensor_parallel,
             req_rate,
-            run_id
+            num_prompt,
+            dataset_path,
+            #run_id
         ) in itertools.product(
+            m.name,
+            m.dtype,
             m.block_size,
             m.nccl_p2p_disable,
             m.max_num_seqs,
             m.max_num_batched_tokens,
             m.gpu_memory_util,
+            m.gpu,
             m.max_model_len,
+            m.tensor_parallel,
             b.request_rate,
-            range(1, b.num_runs + 1)
+            b.num_prompts,
+            b.dataset_path,
+            #range(1, b.num_runs + 1)
         ):
             yield{
+                "name": name,
+                "dtype": dtype,
                 "block_size": block_size,
                 "nccl": nccl,
                 "max_seqs": max_seqs,
                 "max_tokens": max_tokens,
                 "util": util,
+                "gpu": gpu,
                 "max_len": max_len,
+                "tensor_parallel": tensor_parallel,
                 "req_rate": req_rate,
-                "run_id": run_id
+                "num_prompt": num_prompt,
+                "dataset_path": dataset_path,
+                #"run_id": run_id
             }

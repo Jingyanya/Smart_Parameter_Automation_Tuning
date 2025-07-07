@@ -1,27 +1,30 @@
 docker:  
-  host: 10.67.83.166  
-  user: amd  
+  host: 10.67.81.155  
+  user: pvteam64
+  password: atitech
   docker_path: "/home/amd/:/home/amd/"  
   docker_name: "vllm-cuda-0.6.4.post1:v1"  
-  exe_path: "/home/amd/projects/jiangtao/vllm/"  
-  gpu: "0,1,2,3,4,5,6,7"
-  tensor_parallel: 8
+  exe_path: "/app/vllm/"  
 
-vllm_model:
-  name: DeepSeek-R1-Distill-Llama-70B
-  dtype: float16
+model:
+  name: ["microsoft/Phi-3.5-vision-instruct"]
+  dtype: ["float16"]
   block_size: [16]
   nccl_p2p_disable: [0, 1]
-  max_num_seqs: [1024]
-  max_num_batched_tokens: [1024]
+  max_num_seqs: [8]
+  max_num_batched_tokens: [128]
   gpu_memory_util: [0.95]
+  gpu: ["0,1,2,3,4,5,6,7"]
   max_model_len: [4096]
+  tensor_parallel: [1]
+
+  
 
 benchmark:  
   dataset_name: sharegpt
-  dataset_path: "/home/amd/model2/bob/dataset/sharegpt_v3_unfiltered_cleaned_split/ShareGPT_V3_unfiltered_cleaned_split.json"  
-  request_rate: [4]
-  num_prompts: 1000
+  dataset_path: ["/app/data/sharegpt_gpt4_vicuna_format.json"]
+  request_rate: [4, 8]
+  num_prompts: [100, 1000]
   num_runs: 2
 
-output_dir: "./result"  
+output_dir: "./result"

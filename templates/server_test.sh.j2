@@ -1,0 +1,24 @@
+docker exec -it d0ce559b0fad /bin/bash -c "
+ls
+cd {{ exe_path }};
+HF_HOME=/app/data/huggingface \
+NCCL_P2P_DISABLE={{ nccl }} \
+CUDA_VISIBLE_DEVICES={{ gpu }} \
+VLLM_WORKER_MULTIPROC_METHOD=spawn \
+VLLM_MLA_DISABLE=1 \
+vllm serve {{ name }} \
+       --block-size {{ block_size }} \
+       --dtype {{ dtype }} \
+       --enable-chunked-prefill \
+       --gpu-memory-utilization {{ util }} \
+       --max-model-len {{ max_len }} \
+       --tensor-parallel-size {{ tensor_parallel }} \
+       --trust-remote-code \
+       --use-v2-block-manager \
+       --disable-log-requests \
+       --disable-log-stats \
+       --max-num-seqs {{ max_seqs }} \
+       --max-num-batched-tokens {{ max_tokens }} \
+       --enable-prefix-caching
+echo finish
+"  
